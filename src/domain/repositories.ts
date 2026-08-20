@@ -1,6 +1,10 @@
 import type { EmotionType } from '@/config/constants'
 import type {
   Conversation,
+  DiaryComment,
+  DiaryNotification,
+  DiaryPost,
+  DiaryReply,
   Friend,
   FriendRequest,
   FriendshipStatus,
@@ -11,6 +15,8 @@ import type {
   MessageReply,
   PinnedMessage,
   PresenceStatus,
+  StoryPrivacy,
+  StoryRing,
   Unsubscribe,
   UploadedPhoto,
   User,
@@ -193,4 +199,91 @@ export interface MediaUploadRepository {
     onProgress?: (pct: number) => void,
   ): Promise<string>
   uploadImage(file: File, folder: string): Promise<string>
+  uploadStoryMedia(
+    file: File,
+    authorId: string,
+    onProgress?: (pct: number) => void,
+  ): Promise<string>
 }
+
+export interface CreatePostParams {
+  author: User
+  content: string
+  imageUrls: string[]
+}
+
+export interface DiaryRepository {
+  observeFeed(
+    userId: string,
+    onPosts: (posts: DiaryPost[]) => void,
+  ): Unsubscribe
+  getPost(postId: string): Promise<DiaryPost>
+  createPost(params: CreatePostParams): Promise<string>
+  updatePost(postId: string, authorId: string, content: string): Promise<void>
+  deletePost(postId: string, authorId: string): Promise<void>
+  setPostReaction(
+    postId: string,
+    user: User,
+    type: EmotionType | null,
+    postAuthorId: string,
+  ): Promise<void>
+  observeComments(
+    postId: string,
+    userId: string,
+    onData: (comments: DiaryComment[]) => void,
+  ): Unsubscribe
+  addComment(postId: string, author: User, text: string, postAuthorId: string): Promise<void>
+  deleteComment(postId: string, commentId: string, authorId: string): Promise<void>
+  toggleCommentLike(
+    postId: string,
+    commentId: string,
+    user: User,
+    commentAuthorId: string,
+  ): Promise<void>
+  observeReplies(
+    postId: string,
+    commentId: string,
+    userId: string,
+    onData: (replies: DiaryReply[]) => void,
+  ): Unsubscribe
+  addReply(
+    postId: string,
+    commentId: string,
+    author: User,
+    text: string,
+    commentAuthorId: string,
+    mentioned?: { userId: string; name: string },
+  ): Promise<void>
+  toggleReplyLike(
+    postId: string,
+    commentId: string,
+    replyId: string,
+    user: User,
+    replyAuthorId: string,
+  ): Promise<void>
+  observeNotifications(
+    userId: string,
+    onData: (items: DiaryNotification[]) => void,
+  ): Unsubscribe
+  markNotificationRead(userId: string, notificationId: string): Promise<void>
+}
+
+export interface CreateStoryParams {
+  author: User
+  mediaUrl: string
+  mediaType: 'image' | 'video'
+  privacy: StoryPrivacy
+  visibleToUserIds?: string[]
+}
+
+export interface StoryRepository {
+  observeStoryRings(
+    userId: string,
+    friendIds: string[],
+    onRings: (rings: StoryRing[]) => void,
+  ): Unsubscribe
+  createStory(params: CreateStoryParams): Promise<string>
+  markStoryViewed(storyId: string, viewerId: string): Promise<void>
+  deleteStory(storyId: string, authorId: string): Promise<void>
+}
+

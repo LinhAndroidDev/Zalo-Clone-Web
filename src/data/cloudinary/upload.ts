@@ -15,7 +15,7 @@ export async function uploadToCloudinary(
   form.append('upload_preset', preset)
   form.append('folder', folder)
 
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloud}/upload`, {
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloud}/auto/upload`, {
     method: 'POST',
     body: form,
   })

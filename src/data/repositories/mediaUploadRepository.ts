@@ -28,4 +28,10 @@ export const mediaUploadRepository: MediaUploadRepository = {
     const result = await uploadToCloudinary(file, folder)
     return result.url
   },
+
+  async uploadStoryMedia(file, authorId, onProgress) {
+    const result = await uploadToCloudinary(file, `stories/${authorId}`)
+    onProgress?.(100)
+    return result.url
+  },
 }

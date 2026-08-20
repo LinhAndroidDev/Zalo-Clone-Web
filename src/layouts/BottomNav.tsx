@@ -6,9 +6,11 @@ import { cn } from '@/lib/utils'
 export function BottomNav({
   unreadCount,
   requestCount,
+  diaryCount,
 }: {
   unreadCount: number
   requestCount: number
+  diaryCount: number
 }) {
   const { pathname } = useLocation()
 
@@ -21,7 +23,9 @@ export function BottomNav({
             ? unreadCount
             : tab.to === '/contacts'
               ? requestCount
-              : 0
+              : tab.to === '/diary'
+                ? diaryCount
+                : 0
         return (
           <Link
             key={tab.to}

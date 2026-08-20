@@ -3,6 +3,7 @@ import { ContactsList } from '@/features/contacts/ContactsList'
 import { InboxList } from '@/features/inbox/InboxList'
 import { useIncomingRequestsQuery } from '@/hooks/useFriendsQuery'
 import { useInboxQuery } from '@/hooks/useInboxQuery'
+import { useDiaryNotificationsQuery } from '@/hooks/useDiaryQuery'
 import { BottomNav } from '@/layouts/BottomNav'
 import { NavRail } from '@/layouts/NavRail'
 
@@ -20,16 +21,23 @@ export function MainLayout() {
   const { pathname } = useLocation()
   const { data: conversations = [] } = useInboxQuery()
   const { data: incoming = [] } = useIncomingRequestsQuery()
+  const { data: notes = [] } = useDiaryNotificationsQuery()
 
   const unreadCount = conversations.filter(
     (c) => !c.seen && c.numberUnSeen > 0,
   ).length
+  const diaryUnread = notes.filter((n) => !n.read).length
   const sidePanel = sidePanelFor(pathname)
-  const hideBottomNav = pathname.startsWith('/chat')
+  const hideBottomNav =
+    pathname.startsWith('/chat') || pathname.startsWith('/stories')
 
   return (
     <div className="flex h-dvh bg-background">
-      <NavRail unreadCount={unreadCount} requestCount={incoming.length} />
+      <NavRail
+        unreadCount={unreadCount}
+        requestCount={incoming.length}
+        diaryCount={diaryUnread}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex min-h-0 flex-1">
           {sidePanel ? (
@@ -45,9 +53,11 @@ export function MainLayout() {
           <BottomNav
             unreadCount={unreadCount}
             requestCount={incoming.length}
+            diaryCount={diaryUnread}
           />
         )}
       </div>
     </div>
   )
 }
+

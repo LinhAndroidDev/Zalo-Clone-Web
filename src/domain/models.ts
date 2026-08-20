@@ -128,6 +128,98 @@ export interface UploadedPhoto {
   size: string
 }
 
+export interface LinkPreview {
+  url: string
+  title?: string
+  description?: string
+  imageUrl?: string
+}
+
+export interface DiaryPost {
+  postId: string
+  authorId: string
+  authorName: string
+  authorAvatarUrl: string
+  content: string
+  imageUrls: string[]
+  linkPreview?: LinkPreview
+  createdAtMillis: number
+  likeCount: number
+  commentCount: number
+  emotionSummary: Record<string, number>
+  myReaction?: EmotionType | null
+}
+
+export interface DiaryComment {
+  commentId: string
+  authorId: string
+  authorName: string
+  authorAvatarUrl: string
+  text: string
+  createdAtMillis: number
+  likeCount: number
+  replyCount: number
+  likedByMe?: boolean
+}
+
+export interface DiaryReply {
+  replyId: string
+  authorId: string
+  authorName: string
+  authorAvatarUrl: string
+  text: string
+  createdAtMillis: number
+  likeCount: number
+  mentionedUserId?: string
+  mentionedName?: string
+  likedByMe?: boolean
+}
+
+export type DiaryNotificationType =
+  | 'POST_REACTION'
+  | 'POST_COMMENT'
+  | 'COMMENT_LIKE'
+  | 'COMMENT_REPLY'
+  | 'REPLY_LIKE'
+
+export interface DiaryNotification {
+  id: string
+  type: DiaryNotificationType
+  actorId: string
+  actorName: string
+  actorAvatarUrl: string
+  postId: string
+  commentId?: string
+  replyId?: string
+  reactionType?: string
+  read: boolean
+  createdAtMillis: number
+}
+
+export type StoryPrivacy = 'everyone' | 'friends' | 'custom'
+
+export interface Story {
+  storyId: string
+  authorId: string
+  authorName: string
+  authorAvatarUrl: string
+  mediaUrl: string
+  mediaType: 'image' | 'video'
+  createdAtMillis: number
+  expiresAtMillis: number
+  privacy: StoryPrivacy
+  visibleToUserIds?: string[]
+}
+
+export interface StoryRing {
+  authorId: string
+  authorName: string
+  authorAvatarUrl: string
+  stories: Story[]
+  hasUnseen: boolean
+  isMe: boolean
+}
+
 export type { EmotionType }
 
 export type Unsubscribe = () => void

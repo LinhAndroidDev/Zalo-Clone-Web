@@ -10,6 +10,12 @@ import { ContactsPage } from '@/features/contacts/ContactsPage'
 import { FriendRequestsPage } from '@/features/contacts/FriendRequestsPage'
 import { InboxPage } from '@/features/inbox/InboxPage'
 import { ComingSoonPage } from '@/features/placeholder/ComingSoonPage'
+import { DiaryPage } from '@/features/diary/DiaryPage'
+import { CreatePostPage } from '@/features/diary/CreatePostPage'
+import { PostDetailPage } from '@/features/diary/PostDetailPage'
+import { DiaryNotificationsPage } from '@/features/diary/DiaryNotificationsPage'
+import { CreateStoryPage } from '@/features/stories/CreateStoryPage'
+import { StoryViewerPage } from '@/features/stories/StoryViewerPage'
 import { ProfilePage } from '@/features/profile/ProfilePage'
 import { SettingsPage } from '@/features/profile/SettingsPage'
 import { UserProfilePage } from '@/features/profile/UserProfilePage'
@@ -38,7 +44,12 @@ export const router = createBrowserRouter([
       { path: 'contacts', element: <ContactsPage /> },
       { path: 'contacts/requests', element: <FriendRequestsPage /> },
       { path: 'discover', element: <ComingSoonPage title="Khám phá" /> },
-      { path: 'diary', element: <ComingSoonPage title="Nhật ký" /> },
+      { path: 'diary', element: <DiaryPage /> },
+      { path: 'diary/post/new', element: <CreatePostPage /> },
+      { path: 'diary/post/:postId', element: <PostDetailPage /> },
+      { path: 'diary/notifications', element: <DiaryNotificationsPage /> },
+      { path: 'stories/create', element: <CreateStoryPage /> },
+      { path: 'stories/view', element: <StoryViewerPage /> },
       { path: 'profile', element: <ProfilePage /> },
       { path: 'profile/:userId', element: <UserProfilePage /> },
       { path: 'settings', element: <SettingsPage /> },

@@ -48,3 +48,25 @@ export const INBOX_PREVIEW = {
   PHOTO: '[Hình ảnh]',
   AUDIO: '[Tin nhắn thoại]',
 } as const
+
+export const DIARY_AUTHOR_CHUNK = 10
+export const DIARY_FEED_QUERY_LIMIT = 80
+export const DIARY_FEED_MAX_POSTS = 50
+export const DIARY_NOTIFY_TRUNCATE = 200
+export const STORY_TTL_MS = 24 * 60 * 60 * 1000
+export const STORY_IMAGE_MS = 5_000
+export const STORY_VIDEO_MAX_MS = 30_000
+export const STORY_QUERY_LIMIT = 150
+
+export function emotionToFirestore(type: EmotionType): string {
+  return type.toUpperCase()
+}
+
+export function emotionFromFirestore(raw: string): EmotionType {
+  const lower = raw.toLowerCase()
+  if ((EMOTION_TYPES as string[]).includes(lower)) {
+    return lower as EmotionType
+  }
+  return EMOTION_TYPE.LIKE
+}
+
