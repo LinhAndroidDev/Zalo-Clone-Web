@@ -5,6 +5,7 @@ import { LoginPage } from '@/features/auth/LoginPage'
 import { RegisterPage } from '@/features/auth/RegisterPage'
 import { SplashPage } from '@/features/auth/SplashPage'
 import { ChatPage } from '@/features/chat/ChatPage'
+import { CreateGroupPage } from '@/features/chat/CreateGroupPage'
 import { ContactsPage } from '@/features/contacts/ContactsPage'
 import { FriendRequestsPage } from '@/features/contacts/FriendRequestsPage'
 import { InboxPage } from '@/features/inbox/InboxPage'
@@ -41,6 +42,7 @@ export const router = createBrowserRouter([
       { path: 'profile', element: <ProfilePage /> },
       { path: 'profile/:userId', element: <UserProfilePage /> },
       { path: 'settings', element: <SettingsPage /> },
+      { path: 'chat/new-group', element: <CreateGroupPage /> },
       { path: 'chat/:roomId', element: <ChatPage /> },
     ],
   },

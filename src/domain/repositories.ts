@@ -1,10 +1,18 @@
+import type { EmotionType } from '@/config/constants'
 import type {
   Conversation,
   Friend,
   FriendRequest,
   FriendshipStatus,
+  GroupChat,
+  MemberRead,
   Message,
+  MessageMention,
+  MessageReply,
+  PinnedMessage,
+  PresenceStatus,
   Unsubscribe,
+  UploadedPhoto,
   User,
 } from '@/domain/models'
 
@@ -53,6 +61,11 @@ export interface ConversationRepository {
     userId: string,
     onData: (conversations: Conversation[]) => void,
   ): Unsubscribe
+  observeConversation(
+    ownerId: string,
+    otherId: string,
+    onData: (row: Conversation | null) => void,
+  ): Unsubscribe
 }
 
 export interface SendMessageParams {
@@ -63,7 +76,14 @@ export interface SendMessageParams {
   receiverId: string
   receiverName: string
   receiverAvatar: string
-  text: string
+  text?: string
+  photos?: UploadedPhoto[]
+  audioUrl?: string
+  replyTo?: MessageReply
+  mentions?: MessageMention[]
+  isGroup?: boolean
+  memberIds?: string[]
+  memberProfiles?: Record<string, { name: string; avatar: string }>
 }
 
 export interface ChatRepository {
@@ -72,6 +92,105 @@ export interface ChatRepository {
     roomId: string,
     onData: (messages: Message[]) => void,
   ): Unsubscribe
+  observePinnedMessages(
+    roomId: string,
+    onData: (pinned: PinnedMessage[]) => void,
+  ): Unsubscribe
   sendMessage(params: SendMessageParams): Promise<void>
+  removeMessage(roomId: string, time: string): Promise<void>
+  pinMessage(
+    message: Message,
+    roomId: string,
+    userId: string,
+    userName: string,
+  ): Promise<void>
+  unpinMessage(roomId: string, messageTime: string): Promise<void>
+  toggleMessageReaction(
+    roomId: string,
+    time: string,
+    userId: string,
+    type: EmotionType,
+  ): Promise<void>
+  updateTyping(
+    myUserId: string,
+    peerId: string,
+    typing: boolean,
+  ): Promise<void>
+  observeTyping(
+    myUserId: string,
+    peerId: string,
+    onData: (typing: boolean) => void,
+  ): Unsubscribe
   markSeen(userId: string, friendId: string): Promise<void>
+}
+
+export interface CreateGroupParams {
+  name: string
+  photoUrl: string
+  memberIds: string[]
+  creator: User
+  memberProfiles: Record<string, { name: string; avatar: string }>
+}
+
+export interface GroupChatRepository {
+  createGroup(
+    params: CreateGroupParams,
+  ): Promise<{ groupId: string }>
+  getGroup(groupId: string): Promise<GroupChat>
+  loadGroupMembers(groupId: string): Promise<User[]>
+  addGroupMembers(
+    groupId: string,
+    newMemberIds: string[],
+    inviter: User,
+    memberProfiles: Record<string, { name: string; avatar: string }>,
+  ): Promise<void>
+  removeGroupMember(
+    groupId: string,
+    memberId: string,
+    actor: User,
+    memberName: string,
+  ): Promise<void>
+  leaveGroup(groupId: string, user: User): Promise<void>
+  observeGroup(
+    groupId: string,
+    onData: (group: GroupChat) => void,
+  ): Unsubscribe
+  observeGroupTyping(
+    groupId: string,
+    myUserId: string,
+    onData: (typingUserIds: string[]) => void,
+  ): Unsubscribe
+  setGroupTyping(groupId: string, userId: string, typing: boolean): Promise<void>
+  observeGroupMemberRead(
+    groupId: string,
+    onData: (reads: MemberRead[]) => void,
+  ): Unsubscribe
+  markGroupMessageRead(
+    userId: string,
+    groupId: string,
+    lastReadTime: string,
+  ): Promise<void>
+}
+
+export interface PresenceRepository {
+  connect(userId: string): void
+  disconnect(userId: string): void
+  observePresence(
+    userId: string,
+    onData: (status: PresenceStatus) => void,
+  ): Unsubscribe
+}
+
+export interface MediaUploadRepository {
+  uploadPhotos(
+    files: File[],
+    roomId: string,
+    onProgress?: (pct: number) => void,
+  ): Promise<UploadedPhoto[]>
+  uploadAudio(
+    file: File,
+    roomId: string,
+    onProgress?: (pct: number) => void,
+  ): Promise<string>
+  uploadImage(file: File, folder: string): Promise<string>
 }
